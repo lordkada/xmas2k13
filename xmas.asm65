@@ -1,0 +1,262 @@
+; Per farlo partire:
+; Aprite nel vs broswer l'index.html che trovate nel folder 6502js 
+; Dopodiché copiate ed incollate nella textarea questo sorgente, compilate e lanciatelo..
+; 
+; 23 dic 2013 by 
+;   __               __  __ __        __    
+;  / /  ___  _______/ / / //_/__ ____/ /__ _
+; / /__/ _ \/ __/ _  / / ,< / _ `/ _  / _ `/
+;/____/\___/_/  \_,_/ /_/|_|\_,_/\_,_/\_,_/ 
+
+start:
+   ldy #0
+   jsr blinking_cursor
+   jsr blinking_cursor
+   lda #2
+   ldy #0
+   jsr print
+
+   lda #5
+   ldy #1
+   jsr print
+
+   lda #3
+   ldy #2
+   jsr print
+
+   lda #5
+   ldy #3
+   jsr print
+
+   lda #6
+   ldy #4
+   jsr print
+
+   lda #4
+   ldy #5
+   jsr print
+
+   ldy #6
+forever:
+   jsr blinking_cursor
+   jmp forever
+ 
+blinking_cursor:
+   lda #1
+   jsr print
+   jsr wait
+   lda #0
+   jsr print
+   jsr wait
+   rts
+
+wait:
+   lda #0
+   sta $0
+   sta $1
+   
+wait_loop:
+   lda #1
+   adc $0
+   sta $0
+   lda #0
+   adc $1
+   sta $1
+   cmp #2
+   bne wait_loop
+   rts
+
+; accumulator = character to print (index zero based)
+; y = position
+print:
+   tax
+   lda #<map
+   sta $0
+   lda #>map
+   sta $1
+   txa
+   asl ; multiply by 64
+   asl
+   asl
+   asl
+   asl
+   asl
+   clc
+   adc $0
+   sta $0
+   lda #0
+   adc $1
+   sta $1
+   txa
+   ror
+   clc
+   ror
+   clc
+   adc $1
+   sta $1
+   pha
+   lda $0
+   pha
+    
+
+; Let's compute the destination address using the char number (y)
+   sty $0
+   sty $1
+
+   lda #$3
+   and $0
+   sta $0
+
+   ror $1
+   clc
+   ror $1
+   clc
+
+   lda #2
+   adc $1
+   sta $1
+
+   rol $0
+   rol $0
+   rol $0
+  
+   lda $1   
+   pha
+   lda $0
+   pha
+
+   jsr draw_char
+   pla
+   pla
+   pla
+   pla
+   rts
+
+; parameters provided through stack 
+; src address of the map to print
+; dst video address to start (top-left corner)
+draw_char:
+   pha
+   txa
+   pha
+   tya
+   pha
+  
+   tsx ; stack pointer to X
+   lda $106,x  ; parameter 1L
+   sta $00
+   lda $107,x  ; parameter 1H
+   sta $01
+   lda $108,x  ; parameter 2L
+   sta $02
+   lda $109,x  ; parameter 2H
+   sta $03
+
+   ldy #0
+   ldx #0 ; used to loop over 8 pixels
+
+loop:
+   cpy #64
+   beq end_loop
+   lda ($2),y
+   sta ($0),y
+   iny
+   inx
+   cpx #8
+   bne loop
+
+   ldx #0
+
+   lda #23
+   adc $0
+   sta $0
+   lda #0
+   adc $1
+   sta $1
+
+   bvc loop
+
+end_loop:
+   pla
+   tay
+   pla
+   tax
+   pla
+   rts
+
+end:
+   ldx #$ff
+
+*=$1000
+
+map:
+cursor:
+    dcb 1,1,1,1,1,1,1,1
+    dcb 1,1,1,1,1,1,1,1
+    dcb 1,1,1,1,1,1,1,1
+    dcb 1,1,1,1,1,1,1,1
+    dcb 1,1,1,1,1,1,1,1
+    dcb 1,1,1,1,1,1,1,1
+    dcb 1,1,1,1,1,1,1,1
+    dcb 1,1,1,1,1,1,1,1
+
+empty_cursor:
+    dcb 0,0,0,0,0,0,0,0
+    dcb 0,0,0,0,0,0,0,0
+    dcb 0,0,0,0,0,0,0,0
+    dcb 0,0,0,0,0,0,0,0
+    dcb 0,0,0,0,0,0,0,0
+    dcb 0,0,0,0,0,0,0,0
+    dcb 0,0,0,0,0,0,0,0
+    dcb 0,0,0,0,0,0,0,0
+
+
+letter_a:
+    dcb 0,0,0,0,0,0,0,0
+    dcb 0,0,1,1,1,1,0,0
+    dcb 0,1,0,0,0,0,1,0
+    dcb 0,1,0,0,0,0,1,0
+    dcb 0,1,1,1,1,1,1,0
+    dcb 0,1,0,0,0,0,1,0
+    dcb 0,1,0,0,0,0,1,0
+    dcb 0,0,0,0,0,0,0,0
+
+letter_g:
+    dcb 0,0,0,0,0,0,0,0
+    dcb 0,0,1,1,1,1,1,0
+    dcb 0,1,0,0,0,0,0,0
+    dcb 0,1,0,0,1,1,0,0
+    dcb 0,1,0,0,0,0,1,0
+    dcb 0,1,0,0,0,0,1,0
+    dcb 0,0,1,1,1,1,0,0
+    dcb 0,0,0,0,0,0,0,0
+
+letter_i:
+    dcb 0,0,0,0,0,0,0,0
+    dcb 0,0,0,1,0,0,0,0
+    dcb 0,0,0,1,0,0,0,0
+    dcb 0,0,0,1,0,0,0,0
+    dcb 0,0,0,1,0,0,0,0
+    dcb 0,0,0,1,0,0,0,0
+    dcb 0,0,0,1,0,0,0,0
+    dcb 0,0,0,0,0,0,0,0
+
+letter_u:
+    dcb 0,0,0,0,0,0,0,0
+    dcb 0,1,0,0,0,0,1,0
+    dcb 0,1,0,0,0,0,1,0
+    dcb 0,1,0,0,0,0,1,0
+    dcb 0,1,0,0,0,0,1,0
+    dcb 0,1,0,0,0,0,1,0
+    dcb 0,0,1,1,1,1,0,0  
+    dcb 0,0,0,0,0,0,0,0
+
+letter_r:
+    dcb 0,0,0,0,0,0,0,0
+    dcb 0,0,1,1,1,1,0,0
+    dcb 0,1,0,0,0,0,1,0
+    dcb 0,1,0,0,0,0,1,0
+    dcb 0,1,1,1,1,1,0,0
+    dcb 0,1,0,0,1,0,0,0
+    dcb 0,1,0,0,0,1,1,0
+    dcb 0,0,0,0,0,0,0,0
