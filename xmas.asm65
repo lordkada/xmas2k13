@@ -9,34 +9,61 @@
 ;/____/\___/_/  \_,_/ /_/|_|\_,_/\_,_/\_,_/ 
 
 start:
-   ldy #0
-   jsr blinking_cursor
-   jsr blinking_cursor
-   lda #2
+   lda #8
    ldy #0
    jsr print
 
-   lda #5
+   ldy #1
+   jsr blinking_cursor
+   jsr blinking_cursor
+
+   lda #2
    ldy #1
    jsr print
 
-   lda #3
+   lda #5
    ldy #2
    jsr print
 
-   lda #5
+   lda #3
    ldy #3
    jsr print
 
-   lda #6
+   lda #5
    ldy #4
    jsr print
 
-   lda #4
+   lda #6
    ldy #5
    jsr print
 
+   lda #4
    ldy #6
+   jsr print
+
+   ldy #7
+   jsr blinking_cursor
+   lda #1
+   ldy #7
+   jsr print
+
+   ldy #8
+   jsr blinking_cursor
+   jsr blinking_cursor
+
+
+   lda #9
+   ldy #8
+   jsr print
+
+   lda #10
+   ldy #9
+   jsr print
+
+   lda #8
+   ldy #12
+   jsr print
+   ldy #13
 forever:
    jsr blinking_cursor
    jmp forever
@@ -260,3 +287,43 @@ letter_r:
     dcb 0,1,0,0,1,0,0,0
     dcb 0,1,0,0,0,1,1,0
     dcb 0,0,0,0,0,0,0,0
+
+letter_gt:
+    dcb 0,0,0,0,0,0,0,0
+    dcb 0,1,1,0,0,0,0,0
+    dcb 0,0,0,1,1,0,0,0
+    dcb 0,0,0,0,0,1,1,0
+    dcb 0,0,0,0,0,1,1,0
+    dcb 0,0,0,1,1,0,0,0
+    dcb 0,1,1,0,0,0,0,0
+    dcb 0,0,0,0,0,0,0,0
+
+letter_dollar:
+    dcb 0,0,0,0,0,0,0,0
+    dcb 0,0,0,1,0,0,0,0
+    dcb 0,0,1,1,1,1,1,0
+    dcb 0,1,0,1,0,0,0,0
+    dcb 0,0,1,1,1,1,0,0
+    dcb 0,0,0,1,0,0,1,0
+    dcb 0,1,1,1,1,1,0,0
+    dcb 0,0,0,1,0,0,0,0
+
+letter_comma:
+    dcb 0,0,0,0,0,0,0,0
+    dcb 0,0,0,0,0,0,0,0
+    dcb 0,0,0,0,1,0,0,0
+    dcb 0,0,0,0,0,0,0,0
+    dcb 0,0,0,0,0,0,0,0
+    dcb 0,0,0,0,1,0,0,0
+    dcb 0,0,0,0,0,0,0,0
+    dcb 0,0,0,0,0,0,0,0
+
+letter_right_par:
+    dcb 0,0,1,0,0,0,0,0
+    dcb 0,0,0,1,0,0,0,0
+    dcb 0,0,0,1,0,0,0,0
+    dcb 0,0,0,0,1,0,0,0
+    dcb 0,0,0,0,1,0,0,0
+    dcb 0,0,0,1,0,0,0,0
+    dcb 0,0,0,1,0,0,0,0
+    dcb 0,0,1,0,0,0,0,0
