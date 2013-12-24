@@ -43,14 +43,14 @@ start:
 
    ldy #7
    jsr blinking_cursor
+   jsr blinking_cursor
    lda #1
    ldy #7
    jsr print
-
-   ldy #8
-   jsr blinking_cursor
-   jsr blinking_cursor
-
+    
+   jsr wait
+   jsr wait
+   jsr wait
 
    lda #9
    ldy #8
